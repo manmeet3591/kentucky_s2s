@@ -1,0 +1,165 @@
+{
+  "schema_version": "2.0",
+  "title": "Kentucky S2S Research & Operational Subseasonal Dashboard",
+  "author": "Manmeet Singh (manmeet3591)",
+  "repository": "https://github.com/manmeet3591/kentucky_s2s",
+  "domain": {
+    "id": "kentucky",
+    "name": "Commonwealth of Kentucky",
+    "country": "United States",
+    "bounding_box": [
+      -89.6,
+      36.4,
+      -81.9,
+      39.2
+    ],
+    "center": [
+      37.8393,
+      -85.2784
+    ],
+    "zoom": 7
+  },
+  "models": [
+    {
+      "id": "aircast",
+      "label": "Aircast S2S",
+      "badge": "AI Neural Foundation",
+      "resolution": "0.25\u00b0",
+      "members": 100,
+      "color": "#06b6d4"
+    },
+    {
+      "id": "ifs",
+      "label": "IFS S2S",
+      "badge": "ECMWF Physics Ensemble",
+      "resolution": "0.25\u00b0",
+      "members": 51,
+      "color": "#ec4899"
+    }
+  ],
+  "products": [
+    {
+      "id": "temp_anomaly",
+      "label": "2m Temperature Anomaly",
+      "unit_imperial": "\u00b0F",
+      "unit_metric": "\u00b0C",
+      "palette": "coolwarm",
+      "range": [
+        -6,
+        6
+      ],
+      "description": "Departure of 7-day average 2-meter air temperature from the 20-year climatological baseline."
+    },
+    {
+      "id": "precip_anomaly",
+      "label": "Precipitation Anomaly (% of normal)",
+      "unit_imperial": "%",
+      "unit_metric": "%",
+      "palette": "precip_anomaly",
+      "range": [
+        -60,
+        60
+      ],
+      "description": "Weekly accumulated precipitation expressed as percent departure from normal."
+    },
+    {
+      "id": "temp_mean",
+      "label": "2m Mean Temperature",
+      "unit_imperial": "\u00b0F",
+      "unit_metric": "\u00b0C",
+      "palette": "viridis",
+      "range": [
+        40,
+        85
+      ],
+      "description": "Weekly mean 2-meter temperature."
+    },
+    {
+      "id": "precip_total",
+      "label": "Total Precipitation",
+      "unit_imperial": "inches",
+      "unit_metric": "mm",
+      "palette": "ocean",
+      "range": [
+        0,
+        4.0
+      ],
+      "description": "7-day total accumulated precipitation."
+    },
+    {
+      "id": "soil_moisture_anomaly",
+      "label": "Soil Moisture Anomaly (0-10cm)",
+      "unit_imperial": "index",
+      "unit_metric": "index",
+      "palette": "soil",
+      "range": [
+        -3,
+        3
+      ],
+      "description": "Root zone & upper layer soil moisture standardized anomaly."
+    },
+    {
+      "id": "z500_anomaly",
+      "label": "500 hPa Geopotential Height Anomaly",
+      "unit_imperial": "gpm",
+      "unit_metric": "gpm",
+      "palette": "height",
+      "range": [
+        -80,
+        80
+      ],
+      "description": "Mid-tropospheric ridge / trough synoptic patterns controlling Kentucky storm tracks."
+    }
+  ],
+  "available_issues": [
+    {
+      "id": "20260918",
+      "date": "2026-09-18",
+      "initialization": "2026-09-18T00:00:00Z",
+      "is_latest": true,
+      "aircast_file": "data/forecasts/aircast/20260918.json",
+      "ifs_file": "data/forecasts/ifs/20260918.json"
+    },
+    {
+      "id": "20260915",
+      "date": "2026-09-15",
+      "initialization": "2026-09-15T00:00:00Z",
+      "is_latest": false,
+      "aircast_file": "data/forecasts/aircast/20260915.json",
+      "ifs_file": "data/forecasts/ifs/20260915.json"
+    },
+    {
+      "id": "20260911",
+      "date": "2026-09-11",
+      "initialization": "2026-09-11T00:00:00Z",
+      "is_latest": false,
+      "aircast_file": "data/forecasts/aircast/20260911.json",
+      "ifs_file": "data/forecasts/ifs/20260911.json"
+    },
+    {
+      "id": "20260908",
+      "date": "2026-09-08",
+      "initialization": "2026-09-08T00:00:00Z",
+      "is_latest": false,
+      "aircast_file": "data/forecasts/aircast/20260908.json",
+      "ifs_file": "data/forecasts/ifs/20260908.json"
+    },
+    {
+      "id": "20260904",
+      "date": "2026-09-04",
+      "initialization": "2026-09-04T00:00:00Z",
+      "is_latest": false,
+      "aircast_file": "data/forecasts/aircast/20260904.json",
+      "ifs_file": "data/forecasts/ifs/20260904.json"
+    }
+  ],
+  "latest_issue": {
+    "id": "20260918",
+    "date": "2026-09-18",
+    "initialization": "2026-09-18T00:00:00Z",
+    "is_latest": true,
+    "aircast_file": "data/forecasts/aircast/20260918.json",
+    "ifs_file": "data/forecasts/ifs/20260918.json"
+  },
+  "last_updated": "2026-09-18T22:12:31Z"
+}

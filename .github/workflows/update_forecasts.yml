@@ -1,0 +1,81 @@
+name: Operational S2S Forecast Ingestion & Auto-Deploy
+
+on:
+  schedule:
+    # Run every Monday and Thursday at 06:00 UTC (matching S2S subseasonal update cycles)
+    - cron: '0 6 * * 1,4'
+  workflow_dispatch:
+    inputs:
+      force_date:
+        description: 'Forecast cycle date (YYYY-MM-DD)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install NPM dependencies
+        run: npm ci || npm install
+
+      - name: Run S2S Ingestion & Anomaly Processing
+        run: |
+          if [ -n "${{ github.event.inputs.force_date }}" ]; then
+            python3 scripts/fetch_and_process_s2s.py --date "${{ github.event.inputs.force_date }}"
+          else
+            python3 scripts/fetch_and_process_s2s.py
+          fi
+          python3 scripts/generate_geojson.py
+
+      - name: Commit updated forecast JSON datasets to repository
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action S2S Bot"
+          git add public/data/
+          if git diff --staged --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "Auto-update operational S2S guidance [skip ci]"
+            git push
+          fi
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

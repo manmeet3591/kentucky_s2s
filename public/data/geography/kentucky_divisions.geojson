@@ -1,0 +1,257 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "div1",
+        "code": "KY-01",
+        "name": "Western Kentucky",
+        "subregion": "Jackson Purchase & Western Pennyrile",
+        "description": "Paducah, Hopkinsville, Mayfield, Murray, Henderson",
+        "color": "#3b82f6"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -89.57,
+              36.5
+            ],
+            [
+              -89.15,
+              36.5
+            ],
+            [
+              -88.05,
+              36.5
+            ],
+            [
+              -87.1,
+              36.65
+            ],
+            [
+              -87.1,
+              37.5
+            ],
+            [
+              -87.45,
+              37.92
+            ],
+            [
+              -88.02,
+              37.85
+            ],
+            [
+              -88.35,
+              37.5
+            ],
+            [
+              -88.75,
+              37.15
+            ],
+            [
+              -89.15,
+              37.0
+            ],
+            [
+              -89.57,
+              36.98
+            ],
+            [
+              -89.57,
+              36.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "div2",
+        "code": "KY-02",
+        "name": "Central Kentucky",
+        "subregion": "Western Coalfield, Pennyrile & Knobs",
+        "description": "Bowling Green, Owensboro, Elizabethtown, Glasgow",
+        "color": "#10b981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.1,
+              36.65
+            ],
+            [
+              -85.35,
+              36.6
+            ],
+            [
+              -85.2,
+              37.4
+            ],
+            [
+              -85.5,
+              37.95
+            ],
+            [
+              -86.1,
+              38.0
+            ],
+            [
+              -86.8,
+              37.95
+            ],
+            [
+              -87.1,
+              37.88
+            ],
+            [
+              -87.45,
+              37.92
+            ],
+            [
+              -87.1,
+              37.5
+            ],
+            [
+              -87.1,
+              36.65
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "div3",
+        "code": "KY-03",
+        "name": "Bluegrass",
+        "subregion": "North Central Metro & Inner Bluegrass",
+        "description": "Louisville, Lexington, Frankfort, Covington, Richmond",
+        "color": "#8b5cf6"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -85.5,
+              37.95
+            ],
+            [
+              -85.2,
+              37.4
+            ],
+            [
+              -84.0,
+              37.5
+            ],
+            [
+              -83.7,
+              38.2
+            ],
+            [
+              -84.05,
+              38.65
+            ],
+            [
+              -84.35,
+              38.8
+            ],
+            [
+              -84.75,
+              39.14
+            ],
+            [
+              -85.4,
+              38.6
+            ],
+            [
+              -85.8,
+              38.3
+            ],
+            [
+              -86.1,
+              38.0
+            ],
+            [
+              -85.5,
+              37.95
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "div4",
+        "code": "KY-04",
+        "name": "Eastern Kentucky",
+        "subregion": "Cumberland Plateau & Eastern Coalfields",
+        "description": "Pikeville, Hazard, Ashland, London, Morehead, Somerset",
+        "color": "#f59e0b"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -85.35,
+              36.6
+            ],
+            [
+              -84.15,
+              36.6
+            ],
+            [
+              -83.0,
+              36.6
+            ],
+            [
+              -82.6,
+              37.2
+            ],
+            [
+              -81.96,
+              37.55
+            ],
+            [
+              -82.4,
+              38.1
+            ],
+            [
+              -82.55,
+              38.45
+            ],
+            [
+              -82.9,
+              38.65
+            ],
+            [
+              -83.7,
+              38.2
+            ],
+            [
+              -84.0,
+              37.5
+            ],
+            [
+              -85.2,
+              37.4
+            ],
+            [
+              -85.35,
+              36.6
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
