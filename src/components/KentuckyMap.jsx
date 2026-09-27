@@ -40,16 +40,16 @@ export default function KentuckyMap({
       attributionControl: false
     });
 
-    // Dark sleek CartoDB basemap
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
-      maxZoom: 19
+    // Dark sleek Esri Dark Gray Canvas basemap (No API key required)
+    L.tileLayer('https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 16,
+      attribution: 'Esri, HERE, Garmin, © OpenStreetMap contributors'
     }).addTo(map);
 
     // Attribution
     L.control.attribution({
       position: 'bottomright',
-      prefix: '<span class="text-xs text-slate-500">Kentucky S2S · CartoDB · OpenStreetMap</span>'
+      prefix: '<span class="text-xs text-slate-500">Kentucky S2S · Esri · NOAA</span>'
     }).addTo(map);
 
     // Custom Canvas Overlay for Gridded Data
