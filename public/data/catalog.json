@@ -113,10 +113,18 @@
   ],
   "available_issues": [
     {
+      "id": "20260928",
+      "date": "2026-09-28",
+      "initialization": "2026-09-28T00:00:00Z",
+      "is_latest": true,
+      "aircast_file": "data/forecasts/aircast/20260928.json",
+      "ifs_file": "data/forecasts/ifs/20260928.json"
+    },
+    {
       "id": "20260927",
       "date": "2026-09-27",
       "initialization": "2026-09-27T00:00:00Z",
-      "is_latest": true,
+      "is_latest": false,
       "aircast_file": "data/forecasts/aircast/20260927.json",
       "ifs_file": "data/forecasts/ifs/20260927.json"
     },
@@ -162,12 +170,12 @@
     }
   ],
   "latest_issue": {
-    "id": "20260927",
-    "date": "2026-09-27",
-    "initialization": "2026-09-27T00:00:00Z",
+    "id": "20260928",
+    "date": "2026-09-28",
+    "initialization": "2026-09-28T00:00:00Z",
     "is_latest": true,
-    "aircast_file": "data/forecasts/aircast/20260927.json",
-    "ifs_file": "data/forecasts/ifs/20260927.json"
+    "aircast_file": "data/forecasts/aircast/20260928.json",
+    "ifs_file": "data/forecasts/ifs/20260928.json"
   },
-  "last_updated": "2026-09-27T20:37:48Z"
+  "last_updated": "2026-09-28T12:05:19Z"
 }
