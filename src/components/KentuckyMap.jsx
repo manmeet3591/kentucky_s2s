@@ -17,11 +17,18 @@ export default function KentuckyMap({
   const mapInstanceRef = useRef(null);
   const canvasLayerRef = useRef(null);
   const geojsonLayerRef = useRef(null);
+  const countiesLayerRef = useRef(null);
   const markersLayerRef = useRef(null);
 
   const [showStations, setShowStations] = useState(true);
   const [showDivisions, setShowDivisions] = useState(true);
+  const [showCounties, setShowCounties] = useState(true);
   const [cursorVal, setCursorVal] = useState(null);
+
+  const showDivisionsRef = useRef(showDivisions);
+  showDivisionsRef.current = showDivisions;
+  const showCountiesRef = useRef(showCounties);
+  showCountiesRef.current = showCounties;
 
   const currentWeekData = forecastData?.weeks?.[`week_${selectedWeek}`];
 
@@ -51,6 +58,16 @@ export default function KentuckyMap({
       position: 'bottomright',
       prefix: '<span class="text-xs text-slate-500">Kentucky S2S · Esri · NOAA</span>'
     }).addTo(map);
+
+    // Boundary panes sit above the gridded canvas (overlayPane z=400) but below markers (z=600)
+    map.createPane('countiesPane');
+    map.getPane('countiesPane').style.zIndex = 420;
+    map.getPane('countiesPane').style.pointerEvents = 'none';
+    map.createPane('divisionsPane');
+    map.getPane('divisionsPane').style.zIndex = 430;
+    map.createPane('statePane');
+    map.getPane('statePane').style.zIndex = 440;
+    map.getPane('statePane').style.pointerEvents = 'none';
 
     // Custom Canvas Overlay for Gridded Data
     const CanvasOverlay = L.Layer.extend({
@@ -91,6 +108,21 @@ export default function KentuckyMap({
         const { lats, lons, values, productId, unit } = this._gridData;
         if (!lats || !lons || !values) return;
 
+        // Clip the grid to the true Kentucky boundary (falls back to the rough box until it loads)
+        const clipRings = this._clipRings;
+        if (clipRings && clipRings.length) {
+          ctx.save();
+          ctx.beginPath();
+          clipRings.forEach(ring => {
+            ring.forEach(([lon, lat], k) => {
+              const pt = this._map.latLngToContainerPoint([lat, lon]);
+              if (k === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+            });
+            ctx.closePath();
+          });
+          ctx.clip('evenodd');
+        }
+
         const dLat = Math.abs(lats[1] - lats[0]) || 0.25;
         const dLon = Math.abs(lons[1] - lons[0]) || 0.25;
 
@@ -101,9 +133,11 @@ export default function KentuckyMap({
             const val = values[i]?.[j];
             if (val === undefined || val === null) continue;
 
-            // Rough mask for Kentucky bounding envelope
-            if (lat < 36.4 || lat > 39.2 || lon < -89.6 || lon > -81.9) continue;
-            if (lon > -84.0 && lat > (38.5 + (lon + 84.0) * (-0.15))) continue;
+            // Rough mask for Kentucky bounding envelope (used only until the state outline has loaded)
+            if (!clipRings) {
+              if (lat < 36.4 || lat > 39.2 || lon < -89.6 || lon > -81.9) continue;
+              if (lon > -84.0 && lat > (38.5 + (lon + 84.0) * (-0.15))) continue;
+            }
 
             const nw = this._map.latLngToContainerPoint([lat + dLat / 2, lon - dLon / 2]);
             const se = this._map.latLngToContainerPoint([lat - dLat / 2, lon + dLon / 2]);
@@ -125,6 +159,11 @@ export default function KentuckyMap({
             ctx.fillRect(Math.min(nw.x, se.x), Math.min(nw.y, se.y), width + 1, height + 1);
           }
         }
+        if (clipRings && clipRings.length) ctx.restore();
+      },
+      setClip: function (rings) {
+        this._clipRings = rings;
+        this.draw();
       },
       setData: function (gridData) {
         this._gridData = gridData;
@@ -141,23 +180,24 @@ export default function KentuckyMap({
       .then(res => res.json())
       .then(geojson => {
         const geoLayer = L.geoJSON(geojson, {
+          pane: 'divisionsPane',
           style: (feature) => ({
-            color: '#38bdf8',
-            weight: 1.5,
-            dashArray: '4, 4',
+            color: '#0f172a',
+            weight: 2.2,
+            opacity: 0.9,
             fillColor: feature.properties.color || '#0284c7',
-            fillOpacity: 0.08
+            fillOpacity: 0
           }),
           onEachFeature: (feature, layer) => {
             layer.on({
               mouseover: (e) => {
                 const target = e.target;
                 target.setStyle({
-                  weight: 2.5,
-                  dashArray: '',
-                  fillOpacity: 0.22,
-                  color: '#67e8f9'
+                  weight: 3,
+                  fillOpacity: 0.15,
+                  color: '#0e7490'
                 });
+                target.bringToFront();
               },
               mouseout: (e) => {
                 geoLayer.resetStyle(e.target);
@@ -171,13 +211,59 @@ export default function KentuckyMap({
               <div class="px-2 py-1 bg-slate-900 border border-slate-700 text-xs rounded shadow-lg">
                 <div class="font-bold text-cyan-400">${feature.properties.name} (${feature.properties.code})</div>
                 <div class="text-slate-300 text-[11px]">${feature.properties.subregion}</div>
+                ${feature.properties.n_counties ? `<div class="text-slate-400 text-[10px]">NOAA climate division · ${feature.properties.n_counties} counties</div>` : ''}
               </div>
             `, { sticky: true, className: 'custom-tooltip' });
           }
-        }).addTo(map);
+        });
+        if (showDivisionsRef.current) geoLayer.addTo(map);
         geojsonLayerRef.current = geoLayer;
       })
       .catch(err => console.error("Error loading GeoJSON", err));
+
+    // County boundaries (thin, non-interactive)
+    fetch('./data/geography/kentucky_counties.geojson')
+      .then(res => res.json())
+      .then(geojson => {
+        const countiesLayer = L.geoJSON(geojson, {
+          pane: 'countiesPane',
+          interactive: false,
+          style: () => ({
+            color: '#1e293b',
+            weight: 0.7,
+            opacity: 0.55,
+            fill: false
+          })
+        });
+        if (showCountiesRef.current) countiesLayer.addTo(map);
+        countiesLayerRef.current = countiesLayer;
+      })
+      .catch(err => console.error("Error loading county GeoJSON", err));
+
+    // Kentucky state outline: drawn on top and used to clip the gridded field
+    fetch('./data/geography/kentucky_outline.geojson')
+      .then(res => res.json())
+      .then(geojson => {
+        L.geoJSON(geojson, {
+          pane: 'statePane',
+          interactive: false,
+          style: () => ({
+            color: '#f8fafc',
+            weight: 2.4,
+            opacity: 0.95,
+            fill: false
+          })
+        }).addTo(map);
+
+        const rings = [];
+        geojson.features.forEach(f => {
+          const g = f.geometry;
+          const polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
+          polys.forEach(poly => poly.forEach(ring => rings.push(ring)));
+        });
+        canvasLayer.setClip(rings);
+      })
+      .catch(err => console.error("Error loading state outline", err));
 
     // Marker Layer Group
     const markersGroup = L.layerGroup().addTo(map);
@@ -308,6 +394,17 @@ export default function KentuckyMap({
     }
   }, [showDivisions]);
 
+  // Toggle county boundaries
+  useEffect(() => {
+    if (!countiesLayerRef.current || !mapInstanceRef.current) return;
+    const map = mapInstanceRef.current;
+    if (showCounties && !map.hasLayer(countiesLayerRef.current)) {
+      countiesLayerRef.current.addTo(map);
+    } else if (!showCounties && map.hasLayer(countiesLayerRef.current)) {
+      countiesLayerRef.current.remove();
+    }
+  }, [showCounties]);
+
   return (
     <div className="relative w-full h-[540px] lg:h-[620px] rounded-2xl overflow-hidden border border-slate-800 bg-[#080d1a] shadow-2xl">
       <div ref={mapContainerRef} className="w-full h-full" />
@@ -337,6 +434,18 @@ export default function KentuckyMap({
           >
             <Layers size={14} />
             <span>Climate Divisions</span>
+          </button>
+
+          <button
+            onClick={() => setShowCounties(!showCounties)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+              showCounties
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <MapPin size={14} />
+            <span>Counties</span>
           </button>
         </div>
       </div>
